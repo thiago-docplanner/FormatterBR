@@ -1,0 +1,103 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto:400,100,100italic,300,300ita‌​lic,400italic,500,500italic,700,700italic,900italic,900);
+@import url(https://fonts.googleapis.com/css?family=Work+Sans:400,700);
+
+/* Reset */
+
+body,
+.container-fluid,
+header,
+h1,
+h2,
+h3,
+h4,
+p,
+ul {
+  padding: 0px;
+  margin: 0px;
+}
+
+body {
+  font-family: 'Roboto', sans-serif;
+  font-size: 16px;
+}
+
+h1,
+h2,
+h3,
+h4{
+  font-family: "work sans" , sans-serif;
+  font-weight: bold;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+/* Menu Nav */
+header {
+  padding-left: 60px;
+  padding-right: 60px;
+  background-color: #061936;
+  margin-bottom: 40px;
+}
+
+.flex-container {
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  height: 80px;
+}
+
+.flex-container > div {
+  width: 40%;
+  margin-right: 60px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  font-size: 20px;
+}
+
+.logo span{
+  font-family: 'Roboto', sans-serif;
+  font-weight: 400;
+  color: #99BBFF;
+}
+
+#logoDoc {
+  width: 50px;  
+  height: 50px;
+}
+
+h3 {
+  margin-left: 8px;
+}
+
+h3 span {
+  line-height: 20px;
+}
+
+.flex-container > nav  {
+  width: 60%;
+}
+.flex-container > nav > ul {
+  float: right;
+  display: flex;
+  list-style: none;
+  padding: 0;
+}
+
+.flex-container > nav > ul > li a {
+  text-decoration: none;
+  margin-left: 25px;
+  color: #fff;
+}
+.sidebarLayout {
+  padding: 0 55px;
+}
+
+h2 {
+  margin-bottom: 25px;
+}
