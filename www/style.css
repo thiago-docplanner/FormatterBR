@@ -94,10 +94,18 @@ h3 span {
   margin-left: 25px;
   color: #fff;
 }
+.flex-container > nav > ul > li a:hover {
+  color: #99BBFF;
+}
+
 .sidebarLayout {
   padding: 0 55px;
 }
 
 h2 {
   margin-bottom: 25px;
+}
+
+.downloadButton {
+  display: inline-block;
 }

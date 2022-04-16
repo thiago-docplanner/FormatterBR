@@ -1,0 +1,10 @@
+#### PRIORIDADES ####
+
+- Adaptar os Scripts que já tenho para o sistema!
+
+#### TAREFAS ####
+
+- Criar páginas auxiliares
+
+- Continuar criando funções e expandindo o sistema
+

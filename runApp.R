@@ -44,7 +44,8 @@ ui <- fluidPage(
                     
                     #Tasks
                     "IClinic", 
-                    "Horizontal Spreadsheet"),
+                    "Horizontal Spreadsheet",
+                    "Erase empty files"),
                   selected = "IClinic"),
       
       
@@ -52,13 +53,17 @@ ui <- fluidPage(
       # Upload data
       
       
-      
-      fileInput("file1", "Choose CSV or XLSX File",
+      conditionalPanel(
+        
+        condition = "input.type == 'Horizontal Spreadsheet'||
+                    input.type == 'IClinic' ",
+        
+      fileInput("file1", "Choose the file according to the task",
                 multiple = FALSE,
                 accept = c("text/csv",
                            "text/comma-separated-values,text/plain",
                            ".csv",
-                           ".xlsx")),
+                           ".xlsx"))),
       # Reactive UI 
       
       conditionalPanel(
@@ -72,23 +77,37 @@ ui <- fluidPage(
       conditionalPanel(
         condition = "input.type == 'Horizontal Spreadsheet'",
         div(
-          textInput("lineMarker", "Digite o nome da primeira coluna"),
-          textInput('columns', 'Enter a vector (comma delimited)', "coluna1,coluna2,coluna3"),
+          textInput("lineMarker", "First Column"),
+          textInput('columns', 'Other Colums'),
         )),
+      
+      conditionalPanel(
+        condition = "input.type == 'Erase empty files'",
+        textInput("directory", "Write the directory path"),
+      ),
       
       
       ####
       
       actionButton("goButton2", "Go!"),
-      downloadButton("downloadData", "Download")
+      
+      conditionalPanel(
+        "input.type != 'Erase empty files'",
+        downloadButton("downloadData", "Download"),
+        class= "downloadButton"
+      )
       
     ),
     
     # Tables
     mainPanel(
-      tabsetPanel(
-        tabPanel("Before", tableOutput("before")), 
-        tabPanel("After", tableOutput("after"))
+      conditionalPanel(
+        "input.type != 'Erase empty files'",
+        tabsetPanel(
+          tabPanel("Before", tableOutput("before")),
+          tabPanel("After", tableOutput("after"))
+        )
+        
       )
     )
   )),
@@ -652,6 +671,35 @@ server <- function(input, output) {
     
   })
   
+  # Erase an empty file in a specific path
+  eraseEmptyFiles <- observe({
+    
+    input$goButton2
+    
+    isolate({if(input$type == "Erase empty files"){ 
+      
+      diretorio <- input$directory
+      
+      setwd(diretorio)
+      
+      arquivos <- list.files(diretorio, pattern = "\\.xlsx")
+      
+      for (arquivo in arquivos){
+        
+        arquivo <- str_c(diretorio, "/", arquivo)
+        
+        df <-readxl::read_xlsx(arquivo)
+        
+        dfLines <- nrow(df)
+        
+        if(dfLines == 0) {
+          file.remove(arquivo)
+        }
+      }
+    }})
+  })
+  
+  # Show end table
   output$after <- renderTable({
     return(treatment())
   })
