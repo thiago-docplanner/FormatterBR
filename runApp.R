@@ -45,7 +45,8 @@ ui <- fluidPage(
                     #Tasks
                     "IClinic", 
                     "Horizontal Spreadsheet",
-                    "Erase empty files"),
+                    "Erase empty files",
+                    "Fill and aggregate"),
                   selected = "IClinic"),
       
       
@@ -56,7 +57,8 @@ ui <- fluidPage(
       conditionalPanel(
         
         condition = "input.type == 'Horizontal Spreadsheet'||
-                    input.type == 'IClinic' ",
+                    input.type == 'IClinic' ||
+                    input.type == 'Fill and aggregate'",
         
       fileInput("file1", "Choose the file according to the task",
                 multiple = FALSE,
@@ -84,6 +86,18 @@ ui <- fluidPage(
       conditionalPanel(
         condition = "input.type == 'Erase empty files'",
         textInput("directory", "Write the directory path"),
+      ),
+      
+      conditionalPanel(
+      condition = "input.type == 'Fill and aggregate'",
+      selectInput("nColumns", label = strong("Number of columns"),
+                  choices = c(
+                    
+                    #Tasks
+                    "3", 
+                    "4",
+                    "5"),
+                  selected = "3")
       ),
       
       
@@ -663,6 +677,221 @@ server <- function(input, output) {
         }
         
         dfFinal <- df2
+        
+      }
+      
+      # Fill and aggragate
+      else if(input$type == "Fill and aggregate"){
+        
+        req(input$file1)
+        
+        df <- dfBefore()
+        
+        
+        ###########################################
+        lastColumn <- 3
+        column1 <- c()
+        y <- 1
+        lines <- nrow(df)
+        
+        for (i in 1:lines) {
+          if (is.na(df[i,1]) == FALSE) {
+            column1[y] <- df[i,1]
+            x <- df[i,1]
+            y = y + 1
+          }else {
+            column1[y] <- x
+            y = y + 1
+          }
+          
+        }
+        
+        column1Final <- c()
+        
+        y <- 1
+        for (i in 1:lines) {
+          column1Final[y] <- column1[[y]]
+          y = y+1
+        }
+        
+        
+        
+        ###########################################
+        
+        column2 <- c()
+        y <- 1
+        
+        for (i in 1:lines) {
+          if (is.na(df[i,2]) == FALSE) {
+            column2[y] <- df[i,2]
+            x <- df[i,2]
+            y = y + 1
+          }else {
+            column2[y] <- x
+            y = y + 1
+          }
+          
+        }
+        
+        column2Final <- c()
+        
+        y <- 1
+        for (i in 1:lines) {
+          column2Final[y] <- column2[[y]]
+          y = y+1
+        }
+        
+        
+        
+        ###########################################
+        
+        
+        if(input$nColumns == "4"){
+          lastColumn <- 4
+          column3 <- c()
+          y <- 1
+          
+          for (i in 1:lines) {
+            if (is.na(df[i,3]) == FALSE) {
+              column3[y] <- df[i,3]
+              x <- df[i,3]
+              y = y + 1
+            }else {
+              column3[y] <- x
+              y = y + 1
+            }
+            
+          }
+          column3Final <- c()
+          
+          y <- 1
+          for (i in 1:lines) {
+            column3Final[y] <- column3[[y]]
+            y = y+1
+          }
+          
+        }else{
+          column3Final <- c()
+          y <- 1
+          for (i in 1:lines) {
+            column3Final[y] <- NA
+            y = y+1
+          }
+          
+        }
+        
+        
+        
+        
+        ###########################################
+        
+        if(input$nColumns == "5"){
+          
+          lastColumn <- 5
+          
+          column3 <- c()
+          y <- 1
+          
+          for (i in 1:lines) {
+            if (is.na(df[i,3]) == FALSE) {
+              column3[y] <- df[i,3]
+              x <- df[i,3]
+              y = y + 1
+            }else {
+              column3[y] <- x
+              y = y + 1
+            }
+            
+          }
+          column3Final <- c()
+          
+          y <- 1
+          for (i in 1:lines) {
+            column3Final[y] <- column3[[y]]
+            y = y+1
+          }
+          
+          
+          column4 <- c()
+          y <- 1
+          
+          for (i in 1:lines) {
+            if (is.na(df[i,4]) == FALSE) {
+              column4[y] <- df[i,4]
+              x <- df[i,4]
+              y = y + 1
+            }else {
+              column4[y] <- x
+              y = y + 1
+            }
+            
+          }
+          column4Final <- c()
+          
+          y <- 1
+          for (i in 1:lines) {
+            column4Final[y] <- column4[[y]]
+            y = y+1
+          }
+          
+        }else{
+          column4Final <- c()
+          y <- 1
+          for (i in 1:lines) {
+            column4Final[y] <- NA
+            y = y+1
+          }
+          
+        }
+        
+        
+        
+        ###########################################
+        
+        
+        
+        df2 <- data.frame(column1Final, column2Final, column3Final,column4Final,df[lastColumn])
+        
+        colnames(df2)[5] <- "lastColumn"
+        
+        y <- 1
+        
+        for (i in 1:lines) {
+          if(is.na(column3Final[y]) == TRUE){
+            df2$column3Final <- NULL
+            break
+          }
+        }
+        
+        for (i in 1:lines) {
+          if(is.na(column4Final[y]) == TRUE){
+            df2$column4Final <- NULL
+            break
+          }
+        }
+        
+        
+        
+        ###########################################
+        if(input$nColumns == "3"){
+          dfFinal <- df2 %>%
+            aggregate(lastColumn ~ column1Final + column2Final,
+                      data = ., paste, collapse = "\n")
+        }
+        
+        if(input$nColumns == "4"){
+          dfFinal <- df2 %>%
+            aggregate(lastColumn ~ column1Final + column2Final +  column3Final,
+                      data = ., paste, collapse = "\n")
+        }
+        
+        if(input$nColumns == "5"){
+          dfFinal <- df2 %>%
+            aggregate(lastColumn ~ column1Final + column2Final +  column3Final +  column4Final,
+                      data = ., paste, collapse = "\n")
+        }
+      
+        
         
       }
       
