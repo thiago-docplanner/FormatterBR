@@ -45,7 +45,7 @@ ui <- fluidPage(
                     #Tasks
                     "IClinic", 
                     "Horizontal Spreadsheet",
-                    "Erase empty files",
+                    "Erase empty files and columns",
                     "Fill and aggregate"),
                   selected = "IClinic"),
       
@@ -84,7 +84,7 @@ ui <- fluidPage(
         )),
       
       conditionalPanel(
-        condition = "input.type == 'Erase empty files'",
+        condition = "input.type == 'Erase empty files and columns'",
         textInput("directory", "Write the directory path"),
       ),
       
@@ -106,7 +106,7 @@ ui <- fluidPage(
       actionButton("goButton2", "Go!"),
       
       conditionalPanel(
-        "input.type != 'Erase empty files'",
+        "input.type != 'Erase empty files and columns'",
         downloadButton("downloadData", "Download"),
         class= "downloadButton"
       )
@@ -116,7 +116,7 @@ ui <- fluidPage(
     # Tables
     mainPanel(
       conditionalPanel(
-        "input.type != 'Erase empty files'",
+        "input.type != 'Erase empty files and columns'",
         tabsetPanel(
           tabPanel("Before", tableOutput("before")),
           tabPanel("After", tableOutput("after"))
@@ -905,7 +905,7 @@ server <- function(input, output) {
     
     input$goButton2
     
-    isolate({if(input$type == "Erase empty files"){ 
+    isolate({if(input$type == "Erase empty files and columns"){ 
       
       diretorio <- input$directory
       
@@ -920,11 +920,43 @@ server <- function(input, output) {
         df <-readxl::read_xlsx(arquivo)
         
         dfLines <- nrow(df)
+        dfCols = ncol(df)
+        c = 1
+        lista <- c();
         
         if(dfLines == 0) {
           file.remove(arquivo)
+        }else {
+          
+          while(c <= dfCols){
+            l = 1
+            hasValue = FALSE;
+            while(l<=dfLines){
+              if(is.na(df[l,c]) == FALSE){
+                lista <- append(lista, c)
+                break;
+              }
+              l = l+1
+            }
+            
+            c = c+1
+          }
+          
+          c = dfCols
+          while(c > 0) {
+            if(c %in% lista == FALSE){
+              df[c] = NULL;
+            }
+            c = c - 1
+          }
+          writexl::write_xlsx(df,arquivo)
         }
+        
+        
       }
+      
+      
+
     }})
   })
   
