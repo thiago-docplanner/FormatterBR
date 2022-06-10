@@ -46,7 +46,8 @@ ui <- fluidPage(
                     "IClinic", 
                     "Horizontal Spreadsheet",
                     "Erase empty files and columns",
-                    "Fill and aggregate"),
+                    "Fill and aggregate",
+                    "IMedicina"),
                   selected = "IClinic"),
       
       
@@ -58,7 +59,8 @@ ui <- fluidPage(
         
         condition = "input.type == 'Horizontal Spreadsheet'||
                     input.type == 'IClinic' ||
-                    input.type == 'Fill and aggregate'",
+                    input.type == 'Fill and aggregate' ||
+                    input.type == 'IMedicina'",
         
       fileInput("file1", "Choose the file according to the task",
                 multiple = FALSE,
@@ -893,6 +895,55 @@ server <- function(input, output) {
       
         
         
+      }
+      
+      else if(input$type == "IMedicina"){
+        
+        req(input$file1)
+        
+        df <- dfBefore()
+        
+        dfFinal <- data.frame()%>%
+          mutate("ID", "Nome","evento", "Inicio", "Anamnese")
+        
+        linhas <- nrow(df)
+        colunas <- ncol(df)
+        
+        
+        
+        l = 0
+        
+        y = 0
+        
+        while(y<=linhas){
+          y = y+1
+          x = 3
+          
+          while(x<=colunas){
+            c = 1
+            if(is.na(df[y,x]) == FALSE){
+              l = l + 1
+              dfFinal[l,c] <- df[y,1]
+              c = c + 1
+              dfFinal[l,c] <- df[y,2]
+              # Fazer split do atendimento
+              splitInicio <-c(str_split(df[y,x], "inicio:"))
+              c = c + 1
+              dfFinal[l,c] <- splitInicio[[1]][1]
+              
+              
+              c = c + 1
+              splitFim <-c(str_split(splitInicio[[1]][2], "fim:"))
+              dfFinal[l,c] <- splitFim[[1]][1]
+              
+              
+              c = c + 1
+              splitAnamnese <-c(str_split(splitInicio[[1]][2], "anamnese:"))
+              dfFinal[l,c] <- splitAnamnese[[1]][2]
+            }
+            x = x +1
+          }
+        }
       }
       
       return(dfFinal)
