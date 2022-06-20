@@ -47,7 +47,8 @@ ui <- fluidPage(
                     "Horizontal Spreadsheet",
                     "Erase empty files and columns",
                     "Fill and aggregate",
-                    "IMedicina"),
+                    "IMedicina",
+                    "Join tabs"),
                   selected = "IClinic"),
       
       
@@ -86,8 +87,14 @@ ui <- fluidPage(
         )),
       
       conditionalPanel(
-        condition = "input.type == 'Erase empty files and columns'",
+        condition = "input.type == 'Erase empty files and columns' ||
+                    input.type == 'Join tabs'",
         textInput("directory", "Write the directory path"),
+      ),
+      
+      conditionalPanel(
+        condition = "input.type == 'Join tabs'",
+        textInput("file2", "Write the file name"),
       ),
       
       conditionalPanel(
@@ -108,7 +115,7 @@ ui <- fluidPage(
       actionButton("goButton2", "Go!"),
       
       conditionalPanel(
-        "input.type != 'Erase empty files and columns'",
+                    "input.type != 'Erase empty files and columns'",
         downloadButton("downloadData", "Download"),
         class= "downloadButton"
       )
@@ -123,7 +130,6 @@ ui <- fluidPage(
           tabPanel("Before", tableOutput("before")),
           tabPanel("After", tableOutput("after"))
         )
-        
       )
     )
   )),
@@ -630,8 +636,7 @@ server <- function(input, output) {
         dfFinal <- df_final[!duplicated(df_final), ]
         
       }
-      
-      
+    
       # Horizontal spreadsheet
       else if(input$type == "Horizontal Spreadsheet"){
         
@@ -952,11 +957,13 @@ server <- function(input, output) {
   })
   
   # Erase an empty file in a specific path
-  eraseEmptyFiles <- observe({
+  ObserveCases <- observe({
     
     input$goButton2
     
-    isolate({if(input$type == "Erase empty files and columns"){ 
+    isolate({
+      
+      if(input$type == "Erase empty files and columns"){ 
       
       diretorio <- input$directory
       
@@ -1008,7 +1015,45 @@ server <- function(input, output) {
       
       
 
-    }})
+      }
+      
+      else if(input$type == "Join tabs"){
+        directory <- input$directory
+        setwd(directory)
+        file <- input$file2
+        planilhas <- lapply(excel_sheets(file), read_excel, path = file)
+        dfFinal <- data.frame()
+        
+        
+        l = 0
+        numeroPlanilha = 0
+        for(planilha in planilhas){
+          numeroPlanilha = numeroPlanilha +1
+          colunas = ncol(planilha)
+          linhas = nrow(planilha)
+          x = 1
+          while(x < linhas){
+            y = 1
+            l = l +1
+            while(y < colunas +1){
+              if(is.na(planilha[x,y]) == FALSE) {
+                dfFinal[l,y] = planilha[x,y]
+              } else {
+                dfFinal[l,y] = "celula vazia"
+              }
+              
+              y = y +1
+            }
+            x = x+1
+            
+          }
+        }
+        finalPath <- str_c(directory, "FinalFile.xlsx")
+        
+        writexl::write_xlsx(dfFinal, finalPath)
+        
+      }
+    })
   })
   
   # Show end table
