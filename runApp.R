@@ -1021,7 +1021,8 @@ server <- function(input, output) {
         directory <- input$directory
         setwd(directory)
         file <- input$file2
-        planilhas <- lapply(excel_sheets(file), read_excel, path = file)
+        planilhas <- lapply(excel_sheets(file), read_excel,path = file)
+        nomes <- excel_sheets(file)
         dfFinal <- data.frame()
         
         
@@ -1044,11 +1045,12 @@ server <- function(input, output) {
               
               y = y +1
             }
+            dfFinal[l, y] <- nomes[numeroPlanilha]
             x = x+1
             
           }
         }
-        finalPath <- str_c(directory, "FinalFile.xlsx")
+        finalPath <- str_c(directory, "/" ,"FinalFile.xlsx")
         
         writexl::write_xlsx(dfFinal, finalPath)
         
