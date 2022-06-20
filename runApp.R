@@ -1033,7 +1033,7 @@ server <- function(input, output) {
           colunas = ncol(planilha)
           linhas = nrow(planilha)
           x = 1
-          while(x < linhas){
+          while(x <= linhas){
             y = 1
             l = l +1
             while(y < colunas +1){
