@@ -10,7 +10,8 @@ Caroline Attilio
 
 Esse é o repositório oficial do aplicativo Doctoralia Formatter.
 
-Todo conteúdo desse repositório foi desenvolvido pelo time de importação do Brasil para acelerar o precesso de manipulação dos arquivos que recebemos no dia-a-dia. A ideia é que a cada problema diferente que resolvermos, surja uma nova funcionalidade no aplicativo que nos ajude a automatiza-lo.
+Todo conteúdo desse repositório foi desenvolvido pelo time de importação do Brasil para acelerar o precesso de manipulação dos arquivos que recebemos no dia-a-dia.
+A ideia é que a cada problema diferente que resolvermos, surja uma nova funcionalidade no aplicativo que nos ajude a automatiza-lo.
 
 OBSERVAÇÕES SOBRE O APP:
 - Ele foi desenvolvido na linguagem R através da biblioteca shiny
