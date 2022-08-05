@@ -17,13 +17,7 @@ ui <- fluidPage(
     header(div(class = "flex-container", 
                
                div(class = "logo", div(img(id = "logoDoc", src = "logo.png")),div(h3("Docplanner", br(), span("Formatter")))),
-               
-               nav(ul(class = "flex-container menuNav",
-                 li(a("Documentation", href = "#")),
-                 li(a("Tutorials", href = "#")),
-                 li(a("Contribute", href = "#"))
-                 
-               ))))
+               ))
   ),
   
   div( class = "sidebarLayout",
